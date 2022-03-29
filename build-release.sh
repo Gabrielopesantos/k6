@@ -5,8 +5,11 @@ set -eEuo pipefail
 eval "$(go env)"
 
 OUT_DIR="${1-dist}"
-# To override the latest git tag as the version, pass something else as the second arg.
-VERSION=${2:-$(git describe --tags --always --dirty)}
+
+if [ -z "$VERSION" ]; then
+    # To override the latest git tag as the version, pass something else as the second arg.
+    VERSION=${2:-$(git describe --tags --always --dirty)}
+fi
 
 # To overwrite the version details, pass something as the third arg. Empty string disables it.
 VERSION_DETAILS=${3-"$(date -u +"%FT%T%z")/$(git describe --always --long --dirty)"}
