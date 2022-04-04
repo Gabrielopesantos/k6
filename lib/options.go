@@ -22,7 +22,9 @@ package lib
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"net"
 	"reflect"
@@ -130,8 +132,9 @@ func (s *TLSCipherSuites) UnmarshalJSON(data []byte) error {
 // Fields for TLSAuth. Unmarshalling hack.
 type TLSAuthFields struct {
 	// Certificate and key as a PEM-encoded string, including "-----BEGIN CERTIFICATE-----".
-	Cert string `json:"cert"`
-	Key  string `json:"key"`
+	Cert     string `json:"cert"`
+	Key      string `json:"key"`
+	Password string `json:"password"`
 
 	// Domains to present the certificate to. May contain wildcards, eg. "*.example.com".
 	Domains []string `json:"domains"`
@@ -154,8 +157,20 @@ func (c *TLSAuth) UnmarshalJSON(data []byte) error {
 }
 
 func (c *TLSAuth) Certificate() (*tls.Certificate, error) {
+	key := []byte(c.Key)
+	if c.Password != "" {
+		b, _ := pem.Decode([]byte(c.Key)) // Block can be nil
+		if encrypted := x509.IsEncryptedPEMBlock(b); encrypted {
+			decryptedKey, err := x509.DecryptPEMBlock(b, []byte(c.Password))
+			if err != nil {
+				return nil, err
+			}
+			decryptedBlock, _ := pem.Decode(decryptedKey)
+			key = pem.EncodeToMemory(decryptedBlock)
+		}
+	}
 	if c.certificate == nil {
-		cert, err := tls.X509KeyPair([]byte(c.Cert), []byte(c.Key))
+		cert, err := tls.X509KeyPair([]byte(c.Cert), key)
 		if err != nil {
 			return nil, err
 		}
