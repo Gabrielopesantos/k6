@@ -253,6 +253,7 @@ func TestOptions(t *testing.T) {
 					"AwEHoUQDQgAEF8XzmC7x8Ns0Y2Wyu2c77ge+6I/ghcDTjWOMZzMPmRRDxqKFLuGD\n" +
 					"zW1Kss13WODGSS8+j7dNCPOeLKyK6cbeIg==\n" +
 					"-----END EC PRIVATE KEY-----",
+				Password: "iNGNlsrtnO+4HiQAwRgIhANYDaM18sXAdkjyvuiP4IXA041jdK48Jd6a8aD",
 			}, nil},
 		}
 		opts := Options{}.Apply(Options{TLSAuth: tlsAuth})

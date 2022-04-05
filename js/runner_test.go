@@ -1494,6 +1494,7 @@ func TestVUIntegrationClientCerts(t *testing.T) {
 								"AwEHoUQDQgAEozs4lAxgbgou0MCBnzM6DY+KYcyZCeMPYe0jhxLAhQkme8dYujBs\n" +
 								"V71+Tpd4/1vd0rUiZQj778Rl1WsAEByeBw==\n" +
 								"-----END EC PRIVATE KEY-----",
+							Password: "Hello brother",
 						},
 					},
 				}
